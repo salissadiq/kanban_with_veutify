@@ -21,34 +21,42 @@ export default {
     Board
   },
   data:()=>({
-    boards:[{title: 'Test', color: 'red',
-     items:[
-       {title: 'Test', priority: 'High'},
-       {title: 'Test', priority: 'Low'},
-       {title: 'Test', priority: 'Medium'},
-       ]
-     }]
+    boards:[]
   }), 
+  watch:{
+    boards(){
+        localStorage.setItem('boards', JSON.stringify(this.boards))
+    }
+  },
   mounted(){
-    
+    const temp = localStorage.getItem('boards')
+      if(temp){
+          this.boards = JSON.parse(temp) || this.boards
+      }
     EventBus.$on('addBoard', (data)=>{
       this.boards.push({
         title: data.inputA,
         color: data.inputB,
         items:[]
       })
+
     })
     EventBus.$on('addItem', (data)=>{
       this.boards[data.boardIndex].items.push({
         title: data.inputA,
         priority: data.inputB
       })
+      localStorage.setItem('boards', JSON.stringify(this.boards))
     })
     EventBus.$on('deleteBoard', (data)=>{
       this.boards.splice(data.boardIndex, 1)
     })
     EventBus.$on('deleteItem', (data)=>{
       this.boards[data.boardIndex].items.splice(data.itemIndex, 1)
+      localStorage.setItem('boards', JSON.stringify(this.boards))
+    })
+    EventBus.$on('sortItems', ()=>{
+      localStorage.setItem('boards', JSON.stringify(this.boards))
     })
   }
 }

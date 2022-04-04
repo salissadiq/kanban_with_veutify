@@ -15,7 +15,7 @@
         <v-card-text>
             <h4 v-if="board.items.length == 0" class="text-h4 text-center">No Items</h4>
               <div v-else>
-                <draggable v-model="board.items" group="items" handle=".handle" >
+                <draggable v-model="board.items" group="items" handle=".handle" @sort="handleSort">
                     <transition-group transition="scale-transition">
                       <Item 
                       v-for="(item, index) in board.items" 
@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import EventBus from '@/utils/EventBus'
 import draggable from 'vuedraggable'
 import AddItemBtn from '@/components/AddItemBtn'
 import Item from '@/components/BoardItem'
@@ -45,7 +46,12 @@ import Item from '@/components/BoardItem'
         props:['board', 'boardIndex'],
         data:()=>({
 
-        })
+        }),
+        methods:{
+          handleSort(){
+            EventBus.$emit('sortItems')
+          }
+        }
     }
 </script>
 
